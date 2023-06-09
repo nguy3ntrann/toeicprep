@@ -41,3 +41,12 @@ a:hover{
     color: var(--primary) !important;
     text-decoration: underline !important;
 }
+
+i{
+    font-size: 20px !important;
+    cursor: pointer;
+}
+
+.underline{
+    text-decoration: underline !important;
+}
