@@ -111,8 +111,11 @@ function ProtectedRoute({ children }) {
     if (paths.includes(activeRoute)) {
       return true;
     } else {
-      return false;
+      if(activeRoute.includes("/admin/exams/edit") && paths.includes("/admin/exams")){
+        return true;
+      }
     }
+    return false;
   };
 
   return (
