@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Form, Row, Col, message } from "antd";
+import { Form, Row, Col, message, Table } from "antd";
 import PageTitle from "../../../components/PageTitle";
-import { addExam, editExamById, getExamById } from "../../../apicalls/exams";
+import { addExam, deleteQuestionById, editExamById, getExamById } from "../../../apicalls/exams";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { HideLoading, ShowLoading } from "../../../redux/loaderSlice";
 import { Tabs } from "antd";
+import AddEditQuestion from "./AddEditQuestion";
 
 const { TabPane } = Tabs;
 
@@ -14,7 +15,9 @@ function AddEditExam() {
   const navigate = useNavigate();
   const params = useParams();
   const [examData, setExamData] = useState(null);
-
+  const [showAddEditQuestionModal, setShowAddEditQuestionModal] =
+    useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
   const onFinish = async (values) => {
     try {
       dispatch(ShowLoading());
@@ -65,6 +68,71 @@ function AddEditExam() {
     }
   }, []);
 
+  const deleteQuestion = async (questionId) => {
+    try {
+      dispatch(ShowLoading());
+      const response = await deleteQuestionById({
+        questionId,
+        examId: params.id
+      });
+      dispatch(HideLoading());
+      if (response.success) {
+        message.success(response.message);
+        getExamData();
+      } else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      dispatch(HideLoading());
+      message.error(error.message)
+    }
+  };
+
+  const questionsColumns = [
+    {
+      title: "Question",
+      dataIndex: "name",
+    },
+    {
+      title: "Options",
+      dataIndex: "options",
+      render: (text, record) => {
+        return Object.keys(record.options).map((key) => {
+          return (
+            <div>
+              {key}: {record.options[key]}
+            </div>
+          );
+        });
+      },
+    },
+    {
+      title: "Correct Option",
+      dataIndex: "correctOption",
+      render: (text, record) => {
+        return ` ${record.correctOption}: ${
+          record.options[record.correctOption]
+        }`;
+      },
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      render: (text, record) => (
+        <div className="flex gap-2">
+          <i
+            className="ri-pencil-line"
+            onClick={() => {
+              setSelectedQuestion(record);
+              setShowAddEditQuestionModal(true);
+            }}
+          ></i>
+          <i className="ri-delete-bin-line" onClick={() => {deleteQuestion(record._id)}}></i>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div>
       <PageTitle title={params.id ? "Edit Exam" : "Add Exam"} />
@@ -105,25 +173,49 @@ function AddEditExam() {
                 </Col>
               </Row>
             </TabPane>
-            <TabPane tab="Questions" key="2">
-              <h1>Questions</h1>
-            </TabPane>
-          </Tabs>
+            {params.id && (
+              <TabPane tab="Questions" key="2">
+                <div className="flex justify-between">
+                  <h1>Questions</h1>
+                  <button
+                    className="primary-outlined-btn"
+                    onClick={() => setShowAddEditQuestionModal(true)}
+                  >
+                    Add question
+                  </button>
+                </div>
 
-          <div className="flex justify-end gap-2">
-            <button
-              className="primary-outlined-btn"
-              type="button"
-              onClick={() => navigate("/admin/exams")}
-            >
-              Cancel
-            </button>
-            <button className="primary-contained-btn" type="submit">
-              Save
-            </button>
-          </div>
+                <Table
+                  columns={questionsColumns}
+                  dataSource={examData?.questions || []}
+                />
+              </TabPane>
+            )}
+          </Tabs>
         </Form>
       )}
+      {showAddEditQuestionModal && (
+        <AddEditQuestion
+          setShowAddEditQuestionModal={setShowAddEditQuestionModal}
+          showAddEditQuestionModal={showAddEditQuestionModal}
+          examId={params.id}
+          refreshData={getExamData}
+          selectedQuestion={selectedQuestion}
+          setSelectedQuestion={setSelectedQuestion}
+        />
+      )}
+      <div className="flex justify-end gap-2">
+        <button
+          className="primary-outlined-btn"
+          type="button"
+          onClick={() => navigate("/admin/exams")}
+        >
+          Cancel
+        </button>
+        <button className="primary-contained-btn" type="submit">
+          Save
+        </button>
+      </div>
     </div>
   );
 }
