@@ -96,13 +96,18 @@ function ProtectedRoute({ children }) {
         message.error(response.message);
       }
     } catch (error) {
+      navigate("/login")
       dispatch(HideLoading())
       message.error(error.message);
     }
   };
 
   useEffect(() => {
-    getUserData();
+    if(localStorage.getItem("token")){
+      getUserData();
+    } else{
+      navigate("/login");
+    }
   }, []);
 
   const activeRoute = window.location.pathname;
