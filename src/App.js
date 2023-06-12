@@ -14,12 +14,13 @@ import Exams from "./pages/admin/Exams";
 import AddEditExam from "./pages/admin/Exams/AddEditExam";
 import Loader from "./components/Loader";
 import { useSelector } from "react-redux";
+import WriteExam from "./pages/user/WriteExam";
 
 function App() {
-  const {loading} = useSelector(state => state.loader)
+  const { loading } = useSelector((state) => state.loader);
   return (
     <>
-      {loading && < Loader/>}
+      {loading && <Loader />}
       <Router>
         <Routes>
           {/* Common routes */}
@@ -32,6 +33,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user/write-exam/:id"
+            element={
+              <ProtectedRoute>
+                <WriteExam />
               </ProtectedRoute>
             }
           />

@@ -3,7 +3,7 @@ import { getAllExams } from '../../../apicalls/exams';
 import { useDispatch, useSelector } from 'react-redux';
 import { HideLoading, ShowLoading } from '../../../redux/loaderSlice';
 import PageTitle from '../../../components/PageTitle';
-import { Col, Row } from 'antd';
+import { Col, Row, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 function Home() {

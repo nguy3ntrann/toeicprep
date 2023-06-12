@@ -1,6 +1,6 @@
-import { Modal, Form } from "antd";
+import { Modal, Form, message } from "antd";
 import React from "react";
-import { addQuestionToExam } from "../../../apicalls/exams";
+import { addQuestionToExam, editQuestionById } from "../../../apicalls/exams";
 import { useDispatch } from "react-redux";
 import { HideLoading, ShowLoading } from "../../../redux/loaderSlice";
 
