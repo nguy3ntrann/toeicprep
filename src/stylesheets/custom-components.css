@@ -30,6 +30,19 @@
     animation: loader 1s linear infinite;
 }
 
+.option{
+    box-shadow: rgba(0,0,0,0.638) 0px 0px 1px;
+    padding: 10px;
+    border-radius: 2px;
+}
+
+.selected-option{
+    box-shadow: rgba(0,0,0,0.638) 0px 0px 1px;
+    padding: 10px;
+    border-radius: 2px;
+    border: 2px solid var(--primary)
+}
+
 @keyframes loader {
     0%{
         transform: rotate(0deg);

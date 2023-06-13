@@ -8,9 +8,13 @@ import Instructions from "./instructions";
 
 function WriteExam() {
   const [examData, setExamData] = useState(null);
+  const [questions = [], setQuestions] = useState([]);
+  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
+  const [selectedOptions = [], setSelectedOptions] = useState({});
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
+  const [view, setView] = useState("instructions");
 
   const getExamData = async () => {
     try {
@@ -20,7 +24,8 @@ function WriteExam() {
       });
       dispatch(HideLoading());
       if (response.success) {
-        setExamData(response.data);
+        setQuestions(response.data.questions);
+        setExamData(response.data);       
       } else {
         message.error(response.message);
       }
@@ -37,15 +42,75 @@ function WriteExam() {
   }, []);
   return (
     examData && (
-      <div className = "mt-2">
+      <div className="mt-2">
         <div className="divider"></div>
 
         <h1 className="text-center">{examData.name}</h1>
 
         <div className="divider"></div>
-        <Instructions 
-            examData={examData}
-        />
+        {view === "instructions" && (
+          <Instructions examData={examData} setView={setView} />
+        )}
+
+        {view === "questions" && (
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl">
+              {selectedQuestionIndex + 1} :{" "}
+              {questions[selectedQuestionIndex].name}
+            </h1>
+
+            <div className="flex flex-col gap-2">
+              {Object.keys(questions[selectedQuestionIndex].options).map(
+                (option, index) => {
+                  return (
+                    <div
+                      className={`flex gap-2 flex-col ${
+                        selectedOptions[selectedQuestionIndex] === option
+                          ? "selected-option"
+                          : "option"
+                      }`}
+                      key={index}
+                      onClick={() => {
+                        setSelectedOptions({
+                          ...selectedOptions,
+                          [selectedQuestionIndex]: option,
+                        });
+                      }}
+                    >
+                      <h1 className="text-xl">
+                        {option}:
+                        {questions[selectedQuestionIndex].options[option]}
+                      </h1>
+                    </div>
+                  );
+                }
+              )}
+            </div>
+
+            <div className="flex justify-between">
+              {selectedQuestionIndex > 0 && (
+                <button
+                  className="primary-outlined-btn"
+                  onClick={() => {
+                    setSelectedQuestionIndex(selectedQuestionIndex - 1);
+                  }}
+                >
+                  Previous
+                </button>
+              )}
+              {selectedQuestionIndex < questions.length - 1 && (
+                <button
+                  className="primary-contained-btn"
+                  onClick={() => {
+                    setSelectedQuestionIndex(selectedQuestionIndex + 1);
+                  }}
+                >
+                  Next
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     )
   );

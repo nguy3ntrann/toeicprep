@@ -32,7 +32,7 @@ function Home() {
     getExams();
   }, [])
   return (
-    <div>
+    user && <div>
       <PageTitle title={
         `Hi ${user.name}, Welcome to TOEIC prep!`
       } />
