@@ -16,7 +16,7 @@ function ProtectedRoute({ children }) {
   const userMenu = [
     {
       title: "Home",
-      paths: ["/"],
+      paths: ["/", "/write-exam"],
       icon: <i className="ri-close-line"></i>,
       onclick: () => navigate("/"),
     },
@@ -46,7 +46,7 @@ function ProtectedRoute({ children }) {
   const adminMenu = [
     {
       title: "Home",
-      paths: ["/"],
+      paths: ["/","/write-exam"],
       icon: <i className="ri-close-line"></i>,
       onclick: () => navigate("/"),
     },
@@ -117,6 +117,9 @@ function ProtectedRoute({ children }) {
       return true;
     } else {
       if(activeRoute.includes("/admin/exams/edit") && paths.includes("/admin/exams")){
+        return true;
+      }
+      if(activeRoute.includes("/user/write-exam") && paths.includes("/user/write-exam")){
         return true;
       }
     }

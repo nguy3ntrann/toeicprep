@@ -43,6 +43,17 @@
     border: 2px solid var(--primary)
 }
 
+.timer{
+    background-color: orange;
+    color: white !important;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    width: 80px
+}
+
 @keyframes loader {
     0%{
         transform: rotate(0deg);

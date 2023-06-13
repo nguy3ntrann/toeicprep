@@ -1,6 +1,6 @@
 import React from "react";
 
-function Instructions({ examData, setView }) {
+function Instructions({ examData, setView, startTimer }) {
   return (
     <div className="flex flex-col item-center gap-5">
       <h1 className="text-2xl underline">Instructions</h1>
@@ -16,7 +16,10 @@ function Instructions({ examData, setView }) {
       </ul>
       <button
         className="primary-outlined-btn"
-        onClick={() => setView("questions")}
+        onClick={() => {
+            startTimer();
+            setView("questions")
+        }}
       >
         Start exam
       </button>
