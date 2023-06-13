@@ -11,6 +11,7 @@ function WriteExam() {
   const [questions = [], setQuestions] = useState([]);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
   const [selectedOptions = [], setSelectedOptions] = useState({});
+  const [result = [], setResult ] = useState({}) 
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function WriteExam() {
       dispatch(HideLoading());
       if (response.success) {
         setQuestions(response.data.questions);
-        setExamData(response.data);       
+        setExamData(response.data);
       } else {
         message.error(response.message);
       }
@@ -35,6 +36,29 @@ function WriteExam() {
     }
   };
 
+  const calculateResult = () => {
+    let correctAnswers = [];
+    let wrongAnswers = [];
+    
+    questions.forEach((question, index) => {
+      if(question.correctOption === selectedOptions[index]){
+        correctAnswers.push(question);
+      }
+      else wrongAnswers.push(question);
+    });
+
+    let result = "Pass";
+    if(correctAnswers.length < examData.passingMarks){
+      result = "Fail";
+    }
+    setResult({
+      correctAnswers,
+      wrongAnswers,
+      result,
+    });
+
+    setView("result");
+  }
   useEffect(() => {
     if (params.id) {
       getExamData();
@@ -108,6 +132,33 @@ function WriteExam() {
                   Next
                 </button>
               )}
+
+              {selectedQuestionIndex === questions.length - 1 && (
+                <button
+                  className="primary-contained-btn"
+                  onClick={() => {
+                    calculateResult();
+
+                  }}
+                >
+                  Submit
+                </button>
+              )} 
+            </div>
+          </div>
+        )}
+
+        {view === "result" && (
+          <div>
+            <h1 className="text-2xl">RESULT</h1>
+
+            <div className="marks">
+              <h1 className="text-md">Total Marks: {examData.totalMarks}</h1>
+
+              <h1 className="text-md">Obtained Marks: {result.correctAnswers.length}</h1>
+              <h1 className = "text-md">Wrong Answers: {result.wrongAnswers.length}</h1>
+              <h1 className="text-md">Passing Marks: {examData.passingMarks}</h1>
+              <h1 className="text-md">RESULT: {result.result}</h1>
             </div>
           </div>
         )}
