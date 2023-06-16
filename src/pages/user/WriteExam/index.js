@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { HideLoading, ShowLoading } from "../../../redux/loaderSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { message } from "antd";
@@ -20,6 +20,7 @@ function WriteExam() {
   const [timeUp, setTimeUp] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
 
+  const {user} = useSelector(state => state.user)
   const getExamData = async () => {
     try {
       dispatch(ShowLoading());
@@ -39,7 +40,7 @@ function WriteExam() {
     }
   };
 
-  const calculateResult = () => {
+  const calculateResult = async () => {
     let correctAnswers = [];
     let wrongAnswers = [];
     
@@ -54,12 +55,19 @@ function WriteExam() {
     if(correctAnswers.length < examData.passingMarks){
       result = "Fail";
     }
-    setResult({
+
+    const tempResult = {
       correctAnswers,
       wrongAnswers,
       result,
-    });
+    }
 
+    setResult(tempResult);
+    const response = await addReport({
+      exam: params.id,
+      result: tempResult,
+      user: user._id
+    })
     setView("result");
   }
 
