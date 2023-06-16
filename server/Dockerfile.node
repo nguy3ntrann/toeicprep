@@ -1,0 +1,12 @@
+FROM node:latest
+
+WORKDIR /app
+
+COPY ./package.json ./package.json
+COPY ./config ./config
+COPY ./middlewares ./middlewares
+COPY ./models ./models
+COPY ./routes ./routes
+RUN npm install 
+EXPOSE 9000
+CMD ["node", "server.js"]

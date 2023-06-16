@@ -1,0 +1,25 @@
+services:
+  toeicfrontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  nodebackend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.node
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+  db:
+    volumes:
+      - toeic_db:/data/db
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+volumes:
+    toeic_db:
